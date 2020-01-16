@@ -1,0 +1,14 @@
+#Dont track this file
+firstProgram.java
+
+# Compiled Source #
+*.exe
+*.o
+*.out
+*.class
+
+
+# Buffer #
+*~
+
+
