@@ -1,17 +1,59 @@
 import java.io.*;
 import java.util.*;
 
-public class Reversi {
-    static Board board;
+class Player {
+    private String name;
+    private CellColor color;
+    private int countCell;
+
+    public Player(CellColor c, String n){
+	String name = new String();
+	name = n;
+	color = c ;
+	countCell = 2;
+    }
+
+    //getter
+    public String getName() {return name;}
+    public int getCount() {return countCell;}
+    public CellColor getColor() {return color;}
+
+    //setter
+    public void setName(String n) {name = n;}
+    public void setColor(CellColor c) {color = c;}
+    public void setCount(int count) {countCell = count;}
     
-    static void printStats(Board board){
+}
+public class Reversi {
+    
+    private static Board board;
+    private static Player PlayerOne;
+    private static Player PlayerTwo;
+
+    CellColor whoIsPlaying;
+    
+    public  Reversi (){
+	PlayerOne = new Player(CellColor.BLACK, "PlayerOne");
+	PlayerTwo = new Player(CellColor.WHITE, "PlayerTwo");
+
+	board = new Board();
+
+	whoIsPlaying = CellColor.BLACK;
 	
     }
+    static void printStats(){
+	System.out.println(PlayerOne.getName() + " | "
+			   + PlayerTwo.getName()); 
+	System.out.println(PlayerOne.getColor() + "    |    "
+			   + PlayerTwo.getColor());
+	System.out.println("    "+ PlayerOne.getCount() + "    |    "
+			   + PlayerTwo.getCount());
+    }
     
-    static void printGame(Board board){
-	printStats(board);
+    static void printGame(String info){
 	board.printBoard();
-	//printMessage();
+	printStats();
+	System.out.println(info);
     }
 
     public static CellColor charToColor(char c){
@@ -27,15 +69,17 @@ public class Reversi {
 	}
 	return CellColor.EMPTY;
     }
+
+    public static void initialization(){
+	Reversi ReversiGame = new Reversi();
+	printGame("INITIALIZATION");
+    }
     public static void main (String args []){
 	Scanner cin = new Scanner(System.in);
 
-	board = new Board();
-
-	board.generateAllMove(CellColor.WHITE);
-	board.printBoard();
-
-	System.out.println("Input x,y and color(e.g b12)");
+	initialization();
+	
+	System.out.print("Input x,y (e.g b12)\n> ");
 	String inputUsr = new String();
 
 	while (true){
