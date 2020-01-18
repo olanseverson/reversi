@@ -17,6 +17,7 @@ public class Reversi {
     
     public static void main (String args []){
 	test  = new Board();
+	
 	test.printBoard();
 
 	Scanner cin = new Scanner(System.in);
@@ -25,13 +26,11 @@ public class Reversi {
 	String inputUsr = new String();
 	Point p = new Point(2,2);
 
-	Cell c = new Cell();
-	
-	System.out.println(c.getColor());
 	while (true){
 	    inputUsr = cin.next();
 	    boolean isUpdated = test.updateBoard(inputUsr);
 	    if(isUpdated) {
+		test.generateAllMove(CellColor.WHITE);
 		test.printBoard();
 	    } else {
 		if (inputUsr.charAt(0) == 'q') break;

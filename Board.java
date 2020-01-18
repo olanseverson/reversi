@@ -9,18 +9,18 @@ class Cell {
     //enum Direction{U, UR, R, DR, D, DL, L, UL}
     
     private CellColor color;
-    private List<Direction> possibleMove;
+    private Stack<Direction> possibleMove;
 
     
     // constructor
     public Cell(){
 	color = CellColor.EMPTY;
-	possibleMove = new ArrayList<Direction>();
+	possibleMove = new Stack<Direction>();
     }
 
     // setter
-    public void setDir(Direction d){
-	possibleMove.add(d);
+    public void addDir(Direction d){
+	possibleMove.push(d);
     }
     public void setColor(char val){
 	if (val=='w' || val=='W') color = CellColor.WHITE;
@@ -40,24 +40,31 @@ class Cell {
     }
 
     // getter
+    public Direction getDir(){
+	return possibleMove.pop();
+    }
     public CellColor getColor(){
 	return color;
     }
 
+    public boolean isEmpty(){
+	return (getColor() == CellColor.EMPTY ||
+		getColor() == CellColor.POSSIBLE);
+    }
     public boolean isOppositeOf(CellColor c){
-	switch (getColor()){
+	switch (c){
 	case WHITE:
-	    if (c == CellColor.WHITE) return true;
+	    if (getColor() == CellColor.BLACK) return true;
 	    break;
 	case BLACK:
-	    if (c == CellColor.BLACK) return true;
+	    if (getColor() == CellColor.WHITE) return true;
 	    break;
 	}
 	return false;
     }
     
     public char printColor() {
-	switch (color){
+	switch (getColor()){
 	case WHITE:
 	    return 'W';
 	case BLACK:
@@ -68,7 +75,17 @@ class Cell {
 	    return '.';
 	}
     }
-    
+
+    public CellColor oppositeColor(){
+	switch (getColor()){
+	case WHITE:
+	    return CellColor.BLACK;
+	case BLACK:
+	    return CellColor.WHITE;
+	}
+	return CellColor.EMPTY;
+    }
+
 }
 
 class Point {
@@ -96,6 +113,10 @@ class Point {
 
     public int Y(){
 	return this.y;
+    }
+
+    public void printPos(Point p){
+	System.out.println("Pos->"+ y+ "," +x);
     }
 }
 
@@ -136,8 +157,16 @@ public class Board {
 	return getCell(p).getColor();
     }
 
+    public Direction getCellDir(Point p){
+	return getCell(p).getDir();
+    }
+
     //setter
-    private void setCellColor(char c, Point p){
+
+    private void addCellDir(Point p, Direction dir){
+	getCell(p).addDir(dir);
+    }
+    private void setCellColor(Point p, char c){
 	getCell(p).setColor(c);
     }
 
@@ -177,7 +206,7 @@ public class Board {
 	int y=s.charAt(1) - '0';
 	int x=s.charAt(2) - '0';
 	Point p = new Point(y,x);
-	setCellColor(s.charAt(0), p);
+	setCellColor(p, s.charAt(0));
 	return true;
     }
 
@@ -214,61 +243,94 @@ public class Board {
     private Point getNeighbor(Direction dir, Point p){
 	int x = p.X();
 	int y = p.Y();
+	//System.out.println(y+","+x+dir);
 	switch (dir){
 	case U:
 	    --y;
+	    break;
 	case UR:
 	    --y;
 	    ++x;
+	    break;
 	case R:
 	    ++x;
+	    break;
 	case DR:
 	    ++y;
 	    ++x;
+	    break;
 	case D:
 	    ++y;
+	    break;
 	case DL:
 	    ++y;
 	    --x;
+	    break;
 	case L:
 	    --x;
+	    break;
 	case UL:
 	    --y;
 	    --x;
+	    break;
 	}
-	
+	//System.out.println(y+","+x+dir);
 	return new Point(y, x);
     }
     
+    public Direction oppositeDir(Direction dir){
+	switch (dir){
+	case U:
+	    return Direction.D;
+	case UR:
+	    return Direction.DL;
+	case R:
+	    return Direction.L;
+	case DR:
+	    return Direction.UL;
+	case D:
+	    return Direction.U;
+	case DL:
+	    return Direction.UR;
+	case L:
+	    return Direction.R;
+	default: // UL
+	    return Direction.DR;
+	}
+    }
     
     private void generateDirMove(Direction dir,
 				 CellColor color,
 				 Point p){
 	//get valid neighbor
 	Point pNext = getNeighbor(dir, p);
-	
+	//System.out.println("1."+pNext.Y()+","+pNext.X()+dir);
 	if (!isPosValid(pNext)) return;
-
+	//System.out.println("2."+p.Y()+","+p.X()+dir);
+	
 	//neighbor cell must be an opposite of current cell
 	if (!getCell(pNext).isOppositeOf(color)){
 	    return;
 	}
 
-	// find cell that has same color
+	//System.out.println(p.Y()+","+p.X()+dir);
+	// find empty
 	boolean found = false;
 	do {
 	    pNext = getNeighbor(dir, pNext);
 
 	    if(!isPosValid(pNext)) break;
 	    
-	    if(getCellColor(pNext) == color) found = true;
+	    if(getCell(pNext).isEmpty()) found = true;
 	    
 	}while (!found);
 
 	// if found, add opposite direction to the cell
 	// to be turn to the opposite color later
 	if (found){
-	    
+	    //System.out.println(pNext.Y()+","+pNext.X()+dir);	    
+	    setCellPossible(pNext);
+	    addCellDir(pNext, oppositeDir(dir));
 	} else {
 	    return;
 	}
@@ -277,11 +339,12 @@ public class Board {
     public void generateAllMove(CellColor color){
 	for (int i=offset; i<=ySize; i++){
 	    for (int j=offset; j<=xSize; j++){
-		Point p = new Point (i,j);
+		Point p = new Point(i,j);
 		if (getCellColor(p) != color)
 		    continue;
 		for (Direction dir : Direction.values())
-		    generateDirMove(dir, color, p);
+		    //p.printPos(getNeighbor(dir, p));
+		   generateDirMove(dir, color, p);
 	    }
 	}
     }
