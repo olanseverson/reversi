@@ -38,10 +38,16 @@ class Cell {
     public void setPossible(){
 	setColor('p');
     }
+    public void setEmpty(){
+	setColor('e');
+    }
 
     // getter
     public Direction getDir(){
 	return possibleMove.pop();
+    }
+    public int getDirSize(){
+	return possibleMove.size();
     }
     public CellColor getColor(){
 	return color;
@@ -84,6 +90,18 @@ class Cell {
 	    return CellColor.WHITE;
 	}
 	return CellColor.EMPTY;
+    }
+
+    public void flipColor(){
+	switch (getColor()){
+	case WHITE:
+	    setBlack();
+	    break;
+	case BLACK:
+	    setWhite();
+	    break;
+	}
+	return;
     }
 
 }
@@ -147,7 +165,7 @@ public class Board {
 	setCellBlack(new Point(ySize/2+1, xSize/2));
 
     }
-
+    
     //getter
     private Cell getCell(Point p){
 	return board[p.Y()-offset][p.X()-offset];
@@ -188,7 +206,13 @@ public class Board {
     private void setCellPossible(Point p){
 	getCell(p).setPossible();
     }
-    
+    private void setCellEmpty(Point p){
+	getCell(p).setEmpty();
+    }
+
+    private void flipCellColor(Point p){
+	getCell(p).flipColor();
+    }
     private boolean isCharValid(String s){
 	if (s.length() == 3) {
 	    char a = s.charAt(0);
@@ -200,13 +224,14 @@ public class Board {
 	} else return false;
     }
     	
-    public boolean updateBoard(String s){
-	if (!isCharValid(s)) return false;
-	//else
-	int y=s.charAt(1) - '0';
-	int x=s.charAt(2) - '0';
-	Point p = new Point(y,x);
-	setCellColor(p, s.charAt(0));
+    public boolean updateBoard(Point p, CellColor c){
+	if (c == CellColor.EMPTY) return false;
+	System.out.println("test");
+	if (!isPosValid(p)) return false;
+	System.out.println("test1");
+	if (getCellColor(p) != CellColor.POSSIBLE) return false;
+	System.out.println("test2");
+	flipAll(p, c);
 	return true;
     }
 
@@ -224,20 +249,37 @@ public class Board {
 	}
     }
 
-    private boolean isPlaceValid(){
-	return false;
-    }
-
     public int whiteCount(){
-	return 0;
+	int count = 0;
+	for (int i=offset; i<=ySize; i++){
+	    for (int j=offset; j<=xSize; j++){
+		Point p = new Point(i,j);
+	        if (getCellColor(p) == CellColor.WHITE)
+		    count++;}
+	}
+	return count;        
     }
 
     public int blackCount(){
-	return 0;
+	int count = 0;
+	for (int i=offset; i<=ySize; i++){
+	    for (int j=offset; j<=xSize; j++){
+		Point p = new Point(i,j);
+	        if (getCellColor(p) == CellColor.BLACK)
+		    count++;}
+	}
+	return count;
     }
 
     public int movesCount(){
-	return 0;
+	int count = 0;
+	for (int i=offset; i<=ySize; i++){
+	    for (int j=offset; j<=xSize; j++){
+		Point p = new Point(i,j);
+	        if (getCellColor(p) == CellColor.POSSIBLE)
+		    count++;}
+	}
+	return count;
     }
 
     private Point getNeighbor(Direction dir, Point p){
@@ -348,4 +390,46 @@ public class Board {
 	    }
 	}
     }
+
+    private void flipDir(Point p, CellColor c, Direction dir){
+	
+	if (c == CellColor.WHITE) setCellWhite(p);
+	if (c == CellColor.BLACK) setCellBlack(p);
+
+	Point pNext = getNeighbor(dir, p);
+
+	//flip all align cell
+	while (getCellColor(pNext)!= c){
+	    flipCellColor(pNext);
+	    pNext=getNeighbor(dir, pNext);
+	    if (!isPosValid(pNext)) break;
+	}
+    }
+    private void restoreCell(Point p){
+	//set to empty again
+	setCellEmpty(p);
+
+	//clear stack of direction;
+	while(getCell(p).getDirSize()>0){
+	    getCellDir(p);
+	}
+    }
+    public void flipAll(Point p, CellColor c){
+	// FLIP all possible direction
+	while (getCell(p).getDirSize()>0){
+	    flipDir(p, c, getCellDir(p));
+	}
+
+	//restore to empty cell again
+	System.out.println("here");
+	for (int i=offset; i<=ySize; i++){
+	    for (int j=offset; j<=xSize; j++){
+		Point tmp = new Point(i,j);
+	        if (getCellColor(tmp) == CellColor.POSSIBLE){
+		    restoreCell(tmp);
+		}
+	    }
+	}
+    }
+    
 }
