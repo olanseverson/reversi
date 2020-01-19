@@ -4,10 +4,33 @@ import java.util.*;
 enum CellColor{WHITE, BLACK, EMPTY, POSSIBLE}
 enum Direction{U, UR, R, DR, D, DL, L, UL}
 
+class Player {
+    private String name;
+    private CellColor color;
+    private int moveNum;
+    private int colorNum;
+
+    public Player(CellColor c, String n){
+	name = n;
+	color = c ;
+	colorNum = 2;
+	moveNum = 0;
+    }
+
+    //getter
+    public String getName() {return name;}
+    public int getColorNum() {return colorNum;}
+    public CellColor getColor() {return color;}
+    public int getMoveNum() {return moveNum;}
+
+    //setter
+    public void setName(String n) {name = n;}
+    public void setColor(CellColor c) {color = c;}
+    public void setColorNum(int count) {colorNum = count;}
+    public void setMoveNum(int count) {moveNum = count;}
+}
+
 class Cell {
-    //enum CellColor{WHITE, BLACK, EMPTY, POSSIBLE}
-    //enum Direction{U, UR, R, DR, D, DL, L, UL}
-    
     private CellColor color;
     private Stack<Direction> possibleMove;
 
@@ -76,9 +99,9 @@ class Cell {
 	case BLACK:
 	    return 'B';
 	case EMPTY:
-	    return 164;
+	    return 'o';//164
 	default :
-	    return '.';
+	    return ' ';
 	}
     }
 
@@ -226,11 +249,11 @@ public class Board {
     	
     public boolean updateBoard(Point p, CellColor c){
 	if (c == CellColor.EMPTY) return false;
-	System.out.println("test");
+	//	System.out.println("test");
 	if (!isPosValid(p)) return false;
-	System.out.println("test1");
+	//System.out.println("test1");
 	if (getCellColor(p) != CellColor.POSSIBLE) return false;
-	System.out.println("test2");
+	//System.out.println("test2");
 	flipAll(p, c);
 	return true;
     }
@@ -362,7 +385,7 @@ public class Board {
 	    pNext = getNeighbor(dir, pNext);
 
 	    if(!isPosValid(pNext)) break;
-	    
+	    if(getCellColor(pNext) == color) break;
 	    if(getCell(pNext).isEmpty()) found = true;
 	    
 	}while (!found);
@@ -381,6 +404,18 @@ public class Board {
     public void generateAllMove(CellColor color){
 	for (int i=offset; i<=ySize; i++){
 	    for (int j=offset; j<=xSize; j++){
+		Point tmp = new Point(i,j);
+	        if (getCellColor(tmp) == CellColor.POSSIBLE){
+		    restoreCell(tmp);
+		    System.out.println(getCell(tmp).getDirSize()+"oke");
+		}
+		System.out.println(getCell(tmp).getDirSize()+"oke");
+	    }
+	}
+	
+	
+	for (int i=offset; i<=ySize; i++){
+	    for (int j=offset; j<=xSize; j++){
 		Point p = new Point(i,j);
 		if (getCellColor(p) != color)
 		    continue;
@@ -389,6 +424,7 @@ public class Board {
 		   generateDirMove(dir, color, p);
 	    }
 	}
+	System.out.println(movesCount());
     }
 
     private void flipDir(Point p, CellColor c, Direction dir){
@@ -431,5 +467,4 @@ public class Board {
 	    }
 	}
     }
-    
 }
