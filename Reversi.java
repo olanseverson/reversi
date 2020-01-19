@@ -34,14 +34,16 @@ public class Reversi {
     
     static void printGame(String info){
 	clearScreen();
+	PlayerOne.setColorNum(board.blackCount());
+	PlayerTwo.setColorNum(board.whiteCount());
 	board.printBoard();
 	printStats();
 	System.out.println(info);
     }
 
     static void clearScreen() {  
-	//	System.out.print("\033[H\033[2J");  
-	//System.out.flush();  
+	System.out.print("\033[H\033[2J");  
+	System.out.flush();  
     }
     
     static void initialization(){
@@ -97,11 +99,11 @@ public class Reversi {
 	}
 
 	// update all stats before printing
-	if (player.getColor() == CellColor.WHITE){
-	    player.setColorNum(board.whiteCount());
-	} else {
-	    player.setColorNum(board.blackCount());
-	}
+	// if (player.getColor() == CellColor.WHITE){
+	//     player.setColorNum(board.whiteCount());
+	// } else {
+	//     player.setColorNum(board.blackCount());
+	// }
 
 	//print board and game stats
 	printGame("\nPlayer`s turn: "+player.getColor());
@@ -115,8 +117,16 @@ public class Reversi {
 	    point = new Point (inputUsr.charAt(0)-'0',
 			       inputUsr.charAt(1)-'0');
 	    isUpdated = board.updateBoard(point, c);
+	    
+	    // update all stats before printing
+	    // if (player.getColor() == CellColor.WHITE){
+	    // 	player.setColorNum(board.whiteCount());
+	    // } else {
+	    // 	player.setColorNum(board.blackCount());
+	    // }
+	    
 	    if (isUpdated == false){
-		printGame("Fill on the available spot!");
+		printGame("\nFill on the available spot!");
 	    }
 	}
 	changePlayer();

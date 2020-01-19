@@ -99,9 +99,9 @@ class Cell {
 	case BLACK:
 	    return 'B';
 	case EMPTY:
-	    return 'o';//164
+	    return '-';//164
 	default :
-	    return ' ';
+	    return '+';
 	}
     }
 
@@ -411,7 +411,7 @@ public class Board {
 		}
 		System.out.println(getCell(tmp).getDirSize()+"oke");
 	    }
-	}
+	} // DELETE THIS
 	
 	
 	for (int i=offset; i<=ySize; i++){
