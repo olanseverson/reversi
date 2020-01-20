@@ -1,6 +1,8 @@
 import java.io.*;
 import java.util.*;
 
+enum CellColor{WHITE, BLACK, EMPTY, POSSIBLE}
+enum Direction{U, UR, R, DR, D, DL, L, UL}
 
 public class Reversi {
     private static Board board;
@@ -98,13 +100,6 @@ public class Reversi {
 	    return;
 	}
 
-	// update all stats before printing
-	// if (player.getColor() == CellColor.WHITE){
-	//     player.setColorNum(board.whiteCount());
-	// } else {
-	//     player.setColorNum(board.blackCount());
-	// }
-
 	//print board and game stats
 	printGame("\nPlayer`s turn: "+player.getColor());
 
@@ -117,13 +112,6 @@ public class Reversi {
 	    point = new Point (inputUsr.charAt(0)-'0',
 			       inputUsr.charAt(1)-'0');
 	    isUpdated = board.updateBoard(point, c);
-	    
-	    // update all stats before printing
-	    // if (player.getColor() == CellColor.WHITE){
-	    // 	player.setColorNum(board.whiteCount());
-	    // } else {
-	    // 	player.setColorNum(board.blackCount());
-	    // }
 	    
 	    if (isUpdated == false){
 		printGame("\nFill on the available spot!");
@@ -148,27 +136,6 @@ public class Reversi {
 	} else {
 	    printGame("DRAW");
 	}
-	
-	// System.out.print("Input x,y (e.g b12)\n> ");
-	// while (true){
-	//     inputUsr = cin.next();
-	//     Point p = new Point(inputUsr.charAt(1)-'0',
-	// 			inputUsr.charAt(2)-'0');
-	//     //System.out.println("test");
-	//     CellColor c = charToColor(inputUsr.charAt(0));
-	//     boolean isUpdated = board.updateBoard(p, c);
-	//     if(isUpdated) {
-	// 	board.generateAllMove(CellColor.WHITE);
-	// 	board.printBoard();
-	//     } else {
-	// 	if (inputUsr.charAt(0) == 'q') break;
-	// 	else {
-	// 	    System.out.println("invalid input");
-	// 	    continue;
-	// 	}
-	//     }
-	// }
-
 	
     }
 }
