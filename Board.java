@@ -20,7 +20,8 @@ public class Board {
 		board[i][j] = new Cell();
 	    }
 	}
-	
+
+	// initialize  black and white cell in early game
 	setCellWhite(new Point(ySize/2, xSize/2));
 	setCellWhite(new Point(ySize/2+1, xSize/2+1));
 
@@ -89,11 +90,11 @@ public class Board {
     	
     public boolean updateBoard(Point p, CellColor c){
 	if (c == CellColor.EMPTY) return false;
-	//	System.out.println("test");
+
 	if (!isPosValid(p)) return false;
-	//System.out.println("test1");
+
 	if (getCellColor(p) != CellColor.POSSIBLE) return false;
-	//System.out.println("test2");
+
 	flipAll(p, c);
 	return true;
     }
@@ -148,7 +149,7 @@ public class Board {
     private Point getNeighbor(Direction dir, Point p){
 	int x = p.X();
 	int y = p.Y();
-	//System.out.println(y+","+x+dir);
+
 	switch (dir){
 	case U:
 	    --y;
@@ -179,7 +180,7 @@ public class Board {
 	    --x;
 	    break;
 	}
-	//System.out.println(y+","+x+dir);
+
 	return new Point(y, x);
     }
     
@@ -209,16 +210,16 @@ public class Board {
 				 Point p){
 	//get valid neighbor
 	Point pNext = getNeighbor(dir, p);
-	//System.out.println("1."+pNext.Y()+","+pNext.X()+dir);
+
 	if (!isPosValid(pNext)) return;
-	//System.out.println("2."+p.Y()+","+p.X()+dir);
+
 	
 	//neighbor cell must be an opposite of current cell
 	if (!getCell(pNext).isOppositeOf(color)){
 	    return;
 	}
 
-	//System.out.println(p.Y()+","+p.X()+dir);
+
 	// find empty
 	boolean found = false;
 	do {
@@ -233,7 +234,6 @@ public class Board {
 	// if found, add opposite direction to the cell
 	// to be turn to the opposite color later
 	if (found){
-	    //System.out.println(pNext.Y()+","+pNext.X()+dir);	    
 	    setCellPossible(pNext);
 	    addCellDir(pNext, oppositeDir(dir));
 	} else {
@@ -244,24 +244,12 @@ public class Board {
     public void generateAllMove(CellColor color){
 	for (int i=offset; i<=ySize; i++){
 	    for (int j=offset; j<=xSize; j++){
-		Point tmp = new Point(i,j);
-	        if (getCellColor(tmp) == CellColor.POSSIBLE){
-		    restoreCell(tmp);
-		    System.out.println(getCell(tmp).getDirSize()+"oke");
-		}
-		System.out.println(getCell(tmp).getDirSize()+"oke");
-	    }
-	} // DELETE THIS
-	
-	
-	for (int i=offset; i<=ySize; i++){
-	    for (int j=offset; j<=xSize; j++){
 		Point p = new Point(i,j);
 		if (getCellColor(p) != color)
 		    continue;
+		//generate possible cell for each direction
 		for (Direction dir : Direction.values())
-		    //p.printPos(getNeighbor(dir, p));
-		   generateDirMove(dir, color, p);
+		    generateDirMove(dir, color, p);
 	    }
 	}
 	System.out.println(movesCount());

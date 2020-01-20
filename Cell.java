@@ -1,9 +1,6 @@
 import java.io.*;
 import java.util.*;
 
-//enum CellColor{WHITE, BLACK, EMPTY, POSSIBLE}
-//enum Direction{U, UR, R, DR, D, DL, L, UL}
-
 public class Cell {
     private CellColor color;
     private Stack<Direction> possibleMove;
@@ -54,6 +51,7 @@ public class Cell {
 	return (getColor() == CellColor.EMPTY ||
 		getColor() == CellColor.POSSIBLE);
     }
+    
     public boolean isOppositeOf(CellColor c){
 	switch (c){
 	case WHITE:
@@ -73,7 +71,7 @@ public class Cell {
 	case BLACK:
 	    return 'B';
 	case EMPTY:
-	    return '-';//164
+	    return '-';
 	default :
 	    return '+';
 	}
@@ -100,5 +98,4 @@ public class Cell {
 	}
 	return;
     }
-
 }

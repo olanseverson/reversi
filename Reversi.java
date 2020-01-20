@@ -52,6 +52,7 @@ public class Reversi {
 	Reversi ReversiGame = new Reversi();
 	clearScreen();
 	printGame("Press Enter to continue...");
+	System.out.println("'q' to quit.");
 
 	try{System.in.read();}
 	catch(Exception e){}
@@ -107,8 +108,19 @@ public class Reversi {
 	Point point;
 	boolean isUpdated = false;
 	while (isUpdated == false){
-	    System.out.print("Input point (e.g 12 )\n> ");
-	    inputUsr = cin.next();
+
+	    //get valid input
+	    do {
+		System.out.print("Input point (e.g 12 )\n> ");
+		inputUsr=cin.next();
+		if(inputUsr.charAt(0) == 'q'){
+		    System.out.println("Program closed.");
+		    System.exit(0);
+		}
+		printGame("\nInvalid Input");
+	    } while (inputUsr.length()<2);
+
+	    // update board from user input (coordinate)
 	    point = new Point (inputUsr.charAt(0)-'0',
 			       inputUsr.charAt(1)-'0');
 	    isUpdated = board.updateBoard(point, c);
@@ -124,11 +136,13 @@ public class Reversi {
 	initialization();
 	clearScreen();
 
+	//run game while there is possible move
 	do {
 	    runGame(whoIsPlaying);
 	}while (!(PlayerOne.getMoveNum()==0 &&
 		  PlayerTwo.getMoveNum()==0));
 
+	//the game ended
 	if (PlayerOne.getColorNum()>PlayerTwo.getColorNum()){
 	    printGame("PlayerOne WIN");
 	} else if(PlayerOne.getColorNum()<PlayerTwo.getColorNum()){
