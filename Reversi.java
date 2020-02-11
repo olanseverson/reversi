@@ -113,16 +113,25 @@ public class Reversi {
 	    do {
 		System.out.print("Input point (e.g 12 )\n> ");
 		inputUsr=cin.next();
-		if(inputUsr.charAt(0) == 'q'){
+		if((inputUsr.charAt(0) == 'q') && inputUsr.length()==1){
 		    System.out.println("Program closed.");
 		    System.exit(0);
 		}
 		printGame("\nInvalid Input");
 	    } while (inputUsr.length()<2);
 
-	    // update board from user input (coordinate)
 	    point = new Point (inputUsr.charAt(0)-'0',
 			       inputUsr.charAt(1)-'0');
+	    if (point.X() < 0 ||
+		point.X() > 9 ||
+		point.Y() < 0 ||
+		point.Y() > 9){
+		
+		printGame("\nNon-number char!");
+		continue;
+	    }
+	    
+    	    // update board from user input (coordinate)
 	    isUpdated = board.updateBoard(point, c);
 	    
 	    if (isUpdated == false){
